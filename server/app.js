@@ -3,6 +3,7 @@ const authRoutes = require("./routes/auth.routes");
 const cors = require("cors");
 const morgan = require("morgan");
 const campaignRoutes = require("./routes/campaign.routes");
+const submissionRoutes = require("./routes/submission.routes");
 
 const app = express();
 
@@ -23,5 +24,7 @@ app.get("/api/health", (_req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/campaigns", campaignRoutes);
+app.use("/api/submissions", submissionRoutes);
+
 
 module.exports = app;
