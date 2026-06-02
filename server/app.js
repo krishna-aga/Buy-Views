@@ -32,6 +32,8 @@ app.use("/api/submissions", submissionRoutes);
 // app.use("/api/wallet", walletRoutes);
 // app.use("/api/withdrawals", withdrawalRoutes);
 // app.use("/api/admin", adminRoutes);
+
+
 app.use((_req, res) => {
   res.status(404).json({
     success: false,
