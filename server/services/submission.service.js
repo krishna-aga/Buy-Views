@@ -3,6 +3,7 @@ const Submission = require("../models/Submission");
 const User = require("../models/User");
 const ApiError = require("../utils/ApiError");
 const { verifyYoutubeSubmissionOwnership } = require("./youtube.service");
+const { syncSubmissionViews } = require("./submissionSync.service");
 
 const createSubmission = async (promoterId, payload) => {
   const campaign = await Campaign.findById(payload.campaignId);
@@ -29,11 +30,18 @@ const createSubmission = async (promoterId, payload) => {
     throw new ApiError(409, "This reel has already been submitted for the selected campaign");
   }
 
-  return Submission.create({
+  const submission = await Submission.create({
     ...payload,
     promoterId,
     youtubeVideoId: videoId,
   });
+
+  try {
+    return await syncSubmissionViews(submission._id);
+  } catch (error) {
+    await Submission.findByIdAndDelete(submission._id);
+    throw error;
+  }
 };
 
 const getPromoterSubmissions = async (promoterId) =>

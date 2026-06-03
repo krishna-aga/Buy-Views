@@ -1,5 +1,5 @@
 const Submission = require("../models/Submission");
-const { syncSubmissionViews } = require("../services/admin.service");
+const { syncSubmissionViews } = require("../services/submissionSync.service");
 
 const DEFAULT_SYNC_CRON = "0 */6 * * *";
 
