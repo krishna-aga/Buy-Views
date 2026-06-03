@@ -82,7 +82,7 @@ export function PromoterDashboard({ token, user, onError, onNotice, refreshUser 
       <MetricStrip
         items={[
           ["Approved earnings", formatCurrency(wallet?.approvedEarnings ?? user.approvedEarnings)],
-          ["Pending earnings", formatCurrency(wallet?.pendingEarnings ?? user.pendingEarnings)],
+          ["Withdrawable", formatCurrency(wallet?.withdrawableBalance ?? user.approvedEarnings)],
           ["Withdrawn", formatCurrency(wallet?.totalWithdrawn ?? user.totalWithdrawn)],
           ["YouTube", youtubeReady ? "Connected" : "Required"],
         ]}
