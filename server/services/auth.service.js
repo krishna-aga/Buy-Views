@@ -12,6 +12,9 @@ const sanitizeUser = (user) => ({
   pendingEarnings: user.pendingEarnings,
   approvedEarnings: user.approvedEarnings,
   totalWithdrawn: user.totalWithdrawn,
+  youtubeConnected: user.youtubeConnected,
+  youtubeChannelId: user.youtubeChannelId,
+  googleId: user.googleId,
   createdAt: user.createdAt,
   updatedAt: user.updatedAt,
 });

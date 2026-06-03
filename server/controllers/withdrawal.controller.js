@@ -6,12 +6,21 @@ const createWithdrawal = async (req, res) => {
     req.validated.body.amount
   );
 
-  res.status(201).json({ success: true, withdrawal });
+  res.status(201).json({
+    success: true,
+    message: "Withdrawal request created successfully",
+    data: { withdrawal },
+    withdrawal,
+  });
 };
 
 const getMyWithdrawals = async (req, res) => {
   const withdrawals = await withdrawalService.getPromoterWithdrawals(req.user._id);
-  res.status(200).json({ success: true, withdrawals });
+  res.status(200).json({
+    success: true,
+    data: { withdrawals },
+    withdrawals,
+  });
 };
 
 module.exports = {

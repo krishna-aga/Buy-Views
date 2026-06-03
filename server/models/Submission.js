@@ -21,8 +21,15 @@ const submissionSchema = new mongoose.Schema(
     },
     platform: {
       type: String,
-      enum: ["instagram", "youtube", "tiktok", "other"],
+      enum: ["youtube"],
+      default: "youtube",
       required: true,
+    },
+    youtubeVideoId: {
+      type: String,
+      required: true,
+      trim: true,
+      index: true,
     },
     views: {
       type: Number,
@@ -33,6 +40,14 @@ const submissionSchema = new mongoose.Schema(
       type: Number,
       default: 0,
       min: 0,
+    },
+    status: {
+      type: String,
+      enum: ["active", "removed"],
+      default: "active",
+    },
+    lastSyncedAt: {
+      type: Date,
     },
   },
   {
