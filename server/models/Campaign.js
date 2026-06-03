@@ -18,9 +18,9 @@ const campaignSchema = new mongoose.Schema(
       default: "",
       trim: true,
     },
-    longVideoUrl: {
+    clipDriveUrl: {
       type: String,
-      required: true,
+      required:true,
       trim: true,
     },
     budget: {

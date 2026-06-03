@@ -1,9 +1,9 @@
-const { z, objectId } = require("./common.validator");
+const { z, objectId, googleDriveUrl } = require("./common.validator");
 
 const campaignBody = z.object({
   title: z.string().trim().min(3, "Title must be at least 3 characters"),
   description: z.string().trim().min(10, "Description must be at least 10 characters"),
-  longVideoUrl: z.string().trim().url("Enter a valid long-form video URL"),
+  clipDriveUrl: googleDriveUrl,
   budget: z.number().positive("Budget must be greater than 0"),
   payoutPer1000Views: z.number().positive("Payout rate must be greater than 0"),
   status: z.enum(["active", "paused", "completed", "cancelled"]).optional(),

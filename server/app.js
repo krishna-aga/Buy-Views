@@ -29,9 +29,9 @@ app.get("/api/health", (_req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/campaigns", campaignRoutes);
 app.use("/api/submissions", submissionRoutes);
-// app.use("/api/wallet", walletRoutes);
-// app.use("/api/withdrawals", withdrawalRoutes);
-// app.use("/api/admin", adminRoutes);
+app.use("/api/wallet", walletRoutes);
+app.use("/api/withdrawals", withdrawalRoutes);
+app.use("/api/admin", adminRoutes);
 
 
 app.use((_req, res) => {

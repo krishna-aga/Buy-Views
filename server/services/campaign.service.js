@@ -116,7 +116,7 @@ const updateCampaign = async (campaignId, creatorId, payload) => {
 
   if (payload.title !== undefined) campaign.title = payload.title;
   if (payload.description !== undefined) campaign.description = payload.description;
-  if (payload.longVideoUrl !== undefined) campaign.longVideoUrl = payload.longVideoUrl;
+  if (payload.clipDriveUrl !== undefined) campaign.clipDriveUrl = payload.clipDriveUrl;
   if (payload.payoutPer1000Views !== undefined) campaign.payoutPer1000Views = payload.payoutPer1000Views;
   if (payload.status !== undefined) campaign.status = payload.status;
 
