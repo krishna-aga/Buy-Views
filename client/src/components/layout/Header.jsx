@@ -11,7 +11,7 @@ export function Header({ user, onSignOut }) {
     <header className="border-b border-gray-200 bg-white">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-4">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-gray-500">Buy Views</p>
+          <p className="text-sm font-semibold uppercase tracking-wide text-gray-500">CeatorReach</p>
           <h1 className="text-xl font-semibold text-gray-950">{dashboardTitle(user.role)}</h1>
         </div>
         <div className="flex items-center gap-4">

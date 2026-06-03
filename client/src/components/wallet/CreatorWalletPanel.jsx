@@ -49,7 +49,7 @@ export function CreatorWalletPanel({
         key: payload.order.keyId,
         amount: Math.round(payload.order.amount * 100),
         currency: payload.order.currency,
-        name: "Buy Views",
+        name: "CeatorReach",
         description: "Creator wallet deposit",
         order_id: payload.order.orderId,
         prefill: {

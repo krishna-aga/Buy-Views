@@ -1,29 +1,36 @@
 # Backend API Postman Test Guide
 
-This file reflects the real routes and request bodies used in the current backend.
+This guide reflects the current backend routes and demo flow.
 
-## 1. Start the backend
+Base URL:
+
+```text
+http://localhost:5000/api
+```
+
+## 1. Start The App
+
+From the project root:
 
 ```bash
 npm install
 npm run dev
 ```
 
-Or:
+Or backend only from `server/`:
 
 ```bash
-node server.js
+npm install
+npm run dev
 ```
 
-Expected startup message:
+Expected backend message:
 
 ```text
 Server running on port 5000
 ```
 
-## 2. Real endpoint test checklist
-
-### Test 1 - Health check
+## 2. Health Check
 
 ```http
 GET http://localhost:5000/api/health
@@ -34,17 +41,18 @@ Expected:
 ```json
 {
   "success": true,
-  "message": "Buy Views backend is running"
+  "message": "CeatorReach backend is running"
 }
 ```
 
-### Test 2 - Register creator
+## 3. Auth
+
+### Register Creator
 
 ```http
 POST http://localhost:5000/api/auth/register
+Content-Type: application/json
 ```
-
-Body:
 
 ```json
 {
@@ -55,17 +63,14 @@ Body:
 }
 ```
 
-Notes:
-- Allowed roles are `creator` or `promoter`.
-- Password must be at least 6 characters.
+Save `token` as `CREATOR_TOKEN`.
 
-### Test 3 - Register promoter
+### Register Promoter
 
 ```http
 POST http://localhost:5000/api/auth/register
+Content-Type: application/json
 ```
-
-Body:
 
 ```json
 {
@@ -76,15 +81,14 @@ Body:
 }
 ```
 
-Save the returned promoter JWT for later tests.
+Save `token` as `PROMOTER_TOKEN`.
 
-### Test 4 - Login
+### Login
 
 ```http
 POST http://localhost:5000/api/auth/login
+Content-Type: application/json
 ```
-
-Body:
 
 ```json
 {
@@ -93,35 +97,107 @@ Body:
 }
 ```
 
-Save the returned JWT token for later tests.
-
-### Test 5 - Get logged-in user
+### Get Logged-In User
 
 ```http
 GET http://localhost:5000/api/auth/me
-```
-
-Headers:
-
-```http
 Authorization: Bearer YOUR_TOKEN
 ```
 
-Expected: your user object from the token.
+## 4. Admin Setup
 
-### Test 6 - Create campaign (creator only)
+Create admin from `server/`:
+
+```bash
+node scripts/create-admin.js "Admin" "admin@example.com" "Admin@12345"
+```
+
+Then login:
+
+```http
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+```
+
+```json
+{
+  "email": "admin@example.com",
+  "password": "Admin@12345"
+}
+```
+
+Save `token` as `ADMIN_TOKEN`.
+
+## 5. Creator Wallet Deposit
+
+Deposits use Razorpay Test Mode. For frontend testing, use the creator dashboard and Razorpay Checkout popup.
+
+### Create Wallet Order
+
+```http
+POST http://localhost:5000/api/wallet/create-order
+Authorization: Bearer CREATOR_TOKEN
+Content-Type: application/json
+```
+
+```json
+{
+  "amount": 1000
+}
+```
+
+Expected:
+
+```json
+{
+  "success": true,
+  "order": {
+    "orderId": "order_xxx",
+    "amount": 1000,
+    "currency": "INR",
+    "keyId": "rzp_test_xxx"
+  }
+}
+```
+
+### Verify Wallet Payment
+
+Normally called by the frontend after Razorpay Checkout succeeds.
+
+```http
+POST http://localhost:5000/api/wallet/verify-payment
+Authorization: Bearer CREATOR_TOKEN
+Content-Type: application/json
+```
+
+```json
+{
+  "razorpay_order_id": "order_xxx",
+  "razorpay_payment_id": "pay_xxx",
+  "razorpay_signature": "signature_from_checkout"
+}
+```
+
+Expected:
+
+```json
+{
+  "success": true,
+  "wallet": {
+    "walletBalance": 1000
+  }
+}
+```
+
+## 6. Creator Campaigns
+
+Creator must have enough `walletBalance` before creating a campaign.
 
 ```http
 POST http://localhost:5000/api/campaigns
-```
-
-Headers:
-
-```http
 Authorization: Bearer CREATOR_TOKEN
+Content-Type: application/json
 ```
-
-Body:
 
 ```json
 {
@@ -135,80 +211,62 @@ Body:
 ```
 
 Notes:
-- `clipDriveUrl` must be a valid Google Drive URL.
-- `budget` and `payoutPer1000Views` must be positive numbers.
 
-### Test 7 - Get all campaigns
+- `clipDriveUrl` must be a Google Drive URL.
+- `budget` and `payoutPer1000Views` must be positive.
+- Campaign budget is deducted from creator wallet and stored as `campaign.remainingBudget`.
+
+### Get All Campaigns
 
 ```http
 GET http://localhost:5000/api/campaigns
+Authorization: Bearer PROMOTER_TOKEN
 ```
 
-Expected: list of campaigns.
-
-### Test 8 - Get my campaigns
+### Get Creator Campaigns
 
 ```http
 GET http://localhost:5000/api/campaigns/my
-```
-
-Headers:
-
-```http
 Authorization: Bearer CREATOR_TOKEN
 ```
 
-Expected: campaigns owned by the logged-in creator.
+## 7. Promoter YouTube OAuth
 
-### Test 9 - Connect YouTube account (promoter only)
+Frontend flow is recommended because browsers cannot send `Authorization` headers during Google redirects.
 
-```http
-GET http://localhost:5000/api/youtube/connect
+From frontend:
+
+```text
+Promoter Dashboard -> Connect YouTube
 ```
 
-Headers:
+Direct route:
 
 ```http
-Authorization: Bearer PROMOTER_TOKEN
+GET http://localhost:5000/api/youtube/connect?token=PROMOTER_TOKEN
 ```
 
-Expected:
-- redirects to Google OAuth
-- after consent, callback saves `youtubeConnected`, `youtubeChannelId`, and `googleId` on the promoter
+Expected after Google consent:
 
-Notes:
-- promoter must already be logged in
-- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `GOOGLE_REDIRECT_URI` must be configured
+- user has `youtubeConnected: true`
+- user has `youtubeChannelId`
 
-### Test 10 - Confirm promoter YouTube connection
+Confirm:
 
 ```http
 GET http://localhost:5000/api/auth/me
-```
-
-Headers:
-
-```http
 Authorization: Bearer PROMOTER_TOKEN
 ```
 
-Expected:
-- `youtubeConnected: true`
-- `youtubeChannelId` present after successful OAuth
+## 8. Promoter Submission
 
-### Test 11 - Create submission (promoter only, YouTube Shorts only)
+Promoter must connect YouTube first.
 
 ```http
 POST http://localhost:5000/api/submissions
-```
-
-Headers:
-
-```http
 Authorization: Bearer PROMOTER_TOKEN
+Content-Type: application/json
 ```
-
-Body:
 
 ```json
 {
@@ -218,135 +276,38 @@ Body:
 }
 ```
 
-Notes:
-- `campaignId` must be a valid 24-character MongoDB ObjectId.
-- `reelUrl` must be a valid YouTube Shorts or YouTube video URL.
-- `platform` is fixed to `youtube`.
-- promoter must have connected YouTube first.
-- backend verifies the submitted Short belongs to the connected YouTube channel.
+What happens:
 
-### Test 12 - Get my submissions
+- backend extracts YouTube video ID
+- backend verifies the Short belongs to the promoter's connected channel
+- backend creates submission
+- backend immediately syncs current YouTube views
+
+### Get My Submissions
 
 ```http
 GET http://localhost:5000/api/submissions/my
-```
-
-Headers:
-
-```http
 Authorization: Bearer PROMOTER_TOKEN
 ```
 
-Expected:
-- submission list for the logged-in promoter
-- each submission should include `youtubeVideoId`, `views`, `earnings`, `status`, and `lastSyncedAt`
+## 9. Admin View Sync
 
-### Test 13 - Get wallet
+YouTube views may increase slowly, so use manual view update for demos.
 
-```http
-GET http://localhost:5000/api/wallet
-```
-
-Headers:
+### Auto Sync From YouTube
 
 ```http
-Authorization: Bearer PROMOTER_TOKEN
-```
-
-Expected: wallet balance and related wallet data for the logged-in user.
-
-### Test 14 - Create withdrawal (promoter only)
-
-```http
-POST http://localhost:5000/api/withdrawals
-```
-
-Headers:
-
-```http
-Authorization: Bearer PROMOTER_TOKEN
-```
-
-Body:
-
-```json
-{
-  "amount": 1000
-}
-```
-
-Notes:
-- `amount` must be a positive number.
-
-### Test 15 - Get my withdrawals
-
-```http
-GET http://localhost:5000/api/withdrawals/my
-```
-
-Headers:
-
-```http
-Authorization: Bearer PROMOTER_TOKEN
-```
-
-Expected: withdrawal history for the logged-in promoter.
-
-### Test 16 - Admin: get all users
-
-```http
-GET http://localhost:5000/api/admin/users
-```
-
-Headers:
-
-```http
+POST http://localhost:5000/api/admin/submissions/SUBMISSION_ID/sync
 Authorization: Bearer ADMIN_TOKEN
 ```
 
-### Test 17 - Admin: get all campaigns
+### Manual View Update
 
 ```http
-GET http://localhost:5000/api/admin/campaigns
-```
-
-Headers:
-
-```http
+PUT http://localhost:5000/api/admin/submissions/SUBMISSION_ID/views
 Authorization: Bearer ADMIN_TOKEN
+Content-Type: application/json
 ```
-
-### Test 18 - Admin: sync submission views from YouTube
-
-```http
-POST http://localhost:5000/api/admin/submissions/:id/sync
-```
-
-Headers:
-
-```http
-Authorization: Bearer ADMIN_TOKEN
-```
-
-Notes:
-- no body required
-- backend fetches the latest YouTube `viewCount`
-- backend updates `submission.views`, `submission.earnings`, `campaign.totalViews`, `campaign.totalSpent`, and `campaign.remainingBudget`
-- if the Short no longer exists, the submission is marked `removed`
-
-### Test 19 - Admin: manual submission view update (fallback)
-
-```http
-PUT http://localhost:5000/api/admin/submissions/:id/views
-```
-
-Headers:
-
-```http
-Authorization: Bearer ADMIN_TOKEN
-```
-
-Body:
 
 ```json
 {
@@ -354,62 +315,178 @@ Body:
 }
 ```
 
-Notes:
-- this route still exists as a manual fallback
-- `views` must be an integer greater than or equal to 0
+Example:
 
-### Test 20 - Admin: approve withdrawal
-
-```http
-PUT http://localhost:5000/api/admin/withdrawals/:id/approve
+```text
+views = 50000
+rate = Rs. 50 per 1000 views
+earnings = 50 * Rs. 50 = Rs. 2500
 ```
 
-Headers:
+Manual update affects:
+
+- submission `views`
+- submission `earnings`
+- campaign `totalViews`
+- campaign `totalSpent`
+- campaign `remainingBudget`
+- promoter `approvedEarnings`
+
+## 10. Wallet
 
 ```http
-Authorization: Bearer ADMIN_TOKEN
+GET http://localhost:5000/api/wallet
+Authorization: Bearer PROMOTER_TOKEN
 ```
 
-Body:
+Expected fields:
 
 ```json
 {
-  "notes": "Approved by admin"
+  "walletBalance": 0,
+  "pendingEarnings": 0,
+  "approvedEarnings": 2500,
+  "withdrawableBalance": 2500,
+  "totalWithdrawn": 0,
+  "pendingWithdrawals": 0
+}
+```
+
+`withdrawableBalance` subtracts pending withdrawal requests.
+
+## 11. Promoter Withdrawal Request
+
+```http
+POST http://localhost:5000/api/withdrawals
+Authorization: Bearer PROMOTER_TOKEN
+Content-Type: application/json
+```
+
+```json
+{
+  "amount": 1000
+}
+```
+
+Expected:
+
+```json
+{
+  "success": true,
+  "message": "Withdrawal request created successfully"
 }
 ```
 
 Notes:
-- `notes` is optional.
 
-### Test 21 - Admin: reject withdrawal
+- `amount` must be greater than `0`
+- promoter must have enough `withdrawableBalance`
+- request starts as `pending`
+- no real payout API is called
+
+### Promoter Withdrawal History
 
 ```http
-PUT http://localhost:5000/api/admin/withdrawals/:id/reject
+GET http://localhost:5000/api/withdrawals/my
+Authorization: Bearer PROMOTER_TOKEN
 ```
 
-Headers:
+## 12. Admin Withdrawal Simulation
+
+Withdrawals are simulated for Razorpay Test Mode college/demo use.
+
+### Get Pending Withdrawals
 
 ```http
+GET http://localhost:5000/api/admin/withdrawals
 Authorization: Bearer ADMIN_TOKEN
 ```
 
-Body:
+### Approve Withdrawal
+
+```http
+PUT http://localhost:5000/api/admin/withdrawals/WITHDRAWAL_ID/approve
+Authorization: Bearer ADMIN_TOKEN
+Content-Type: application/json
+```
 
 ```json
 {
-  "notes": "Rejected by admin"
+  "remarks": "Approved for demo payout"
 }
 ```
 
-## 3. What to verify in Postman
+Expected:
 
-For each request, confirm:
-- status code is correct (`200`, `201`, `400`, `401`, `403`, `404`)
-- JWT auth is enforced
-- role restrictions are enforced
-- invalid data is rejected by validation
-- MongoDB records are actually created or updated
-- wallet, earnings, and withdrawal states behave as expected
-- YouTube OAuth stores the promoter's connected channel correctly
-- YouTube submission ownership is rejected if the Short belongs to another channel
-- auto-sync updates views using YouTube instead of requiring manual admin entry
+```json
+{
+  "success": true,
+  "message": "Withdrawal completed successfully",
+  "data": {
+    "payoutReference": "TEST_PAYOUT_174889999"
+  }
+}
+```
+
+Approval effects:
+
+- withdrawal `status` becomes `completed`
+- fake `payoutReference` is saved
+- promoter `approvedEarnings` decreases
+- promoter `totalWithdrawn` increases
+- transaction with type `withdrawal` is created
+
+### Reject Withdrawal
+
+```http
+PUT http://localhost:5000/api/admin/withdrawals/WITHDRAWAL_ID/reject
+Authorization: Bearer ADMIN_TOKEN
+Content-Type: application/json
+```
+
+```json
+{
+  "remarks": "Rejected during review"
+}
+```
+
+Expected:
+
+```json
+{
+  "success": true,
+  "message": "Withdrawal rejected successfully"
+}
+```
+
+## 13. Admin Tables
+
+### Users
+
+```http
+GET http://localhost:5000/api/admin/users
+Authorization: Bearer ADMIN_TOKEN
+```
+
+### Campaigns
+
+```http
+GET http://localhost:5000/api/admin/campaigns
+Authorization: Bearer ADMIN_TOKEN
+```
+
+## 14. Verification Checklist
+
+Confirm:
+
+- auth tokens are required
+- creator-only and promoter-only route restrictions work
+- creator cannot create campaign without wallet balance
+- Razorpay deposit credits creator wallet only after signature verification
+- YouTube OAuth stores connected channel
+- submission is rejected if video is not from connected channel
+- manual views update creates promoter approved earnings
+- pending withdrawals reduce `withdrawableBalance`
+- admin approval creates `TEST_PAYOUT_<timestamp>`
+- admin approval deducts promoter `approvedEarnings`
+- admin approval increases promoter `totalWithdrawn`

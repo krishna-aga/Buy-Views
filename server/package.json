@@ -1,7 +1,7 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "Buy Views MVP backend",
+  "description": "CeatorReach MVP backend",
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",

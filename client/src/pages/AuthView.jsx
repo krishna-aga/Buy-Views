@@ -60,7 +60,7 @@ export function AuthView({ error, setError, setNotice, setSession }) {
     <PageFrame>
       <main className="mx-auto grid min-h-screen w-full max-w-6xl grid-cols-1 gap-8 px-6 py-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
         <section className="max-w-2xl">
-          <p className="text-sm font-semibold uppercase tracking-wide text-gray-500">Buy Views</p>
+          <p className="text-sm font-semibold uppercase tracking-wide text-gray-500">CeatorReach</p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-gray-950">
             Campaign operations for creator promotion teams.
           </h1>

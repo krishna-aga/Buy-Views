@@ -25,7 +25,7 @@ app.use(morgan("dev"));
 app.get("/api/health", (_req, res) => {
   res.status(200).json({
     success: true,
-    message: "Buy Views backend is running",
+    message: "CeatorReach backend is running",
   });
 });
 
