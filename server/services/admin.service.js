@@ -5,26 +5,10 @@ const Withdrawal = require("../models/Withdrawal");
 const ApiError = require("../utils/ApiError");
 const { calculateEarnings, roundCurrency } = require("../utils/finance");
 const { createTransaction } = require("./transaction.service");
+const { getVideoViews } = require("./youtubeAnalytics.service");
+const { extractYoutubeVideoId } = require("./youtube.service");
 
-const listUsers = async () => User.find().select("-password").sort({ createdAt: -1 });
-
-const listCampaigns = async () =>
-  Campaign.find().populate("creatorId", "name email").sort({ createdAt: -1 });
-
-const updateSubmissionViews = async (submissionId, views) => {
-  const submission = await Submission.findById(submissionId);
-
-  if (!submission) {
-    throw new ApiError(404, "Submission not found");
-  }
-
-  const campaign = await Campaign.findById(submission.campaignId);
-  const promoter = await User.findById(submission.promoterId);
-
-  if (!campaign || !promoter) {
-    throw new ApiError(404, "Associated campaign or promoter not found");
-  }
-
+const applySubmissionMetrics = async ({ submission, campaign, promoter, views, markRemoved = false }) => {
   const nextEarnings = calculateEarnings(views, campaign.payoutPer1000Views);
   const earningsDelta = roundCurrency(nextEarnings - submission.earnings);
   const viewsDelta = views - submission.views;
@@ -33,8 +17,17 @@ const updateSubmissionViews = async (submissionId, views) => {
     throw new ApiError(400, "Campaign does not have enough remaining budget for this view update");
   }
 
+  if (promoter.approvedEarnings + earningsDelta < 0) {
+    throw new ApiError(400, "View reduction would push promoter earnings below zero");
+  }
+
   submission.views = views;
   submission.earnings = nextEarnings;
+  submission.lastSyncedAt = new Date();
+
+  if (markRemoved) {
+    submission.status = "removed";
+  }
 
   campaign.totalViews += viewsDelta;
   campaign.totalSpent = roundCurrency(campaign.totalSpent + earningsDelta);
@@ -43,13 +36,11 @@ const updateSubmissionViews = async (submissionId, views) => {
   if (campaign.remainingBudget <= 0) {
     campaign.remainingBudget = 0;
     campaign.status = "completed";
+  } else if (campaign.status === "completed") {
+    campaign.status = "active";
   }
 
   promoter.approvedEarnings = roundCurrency(promoter.approvedEarnings + earningsDelta);
-
-  if (promoter.approvedEarnings < 0) {
-    throw new ApiError(400, "View reduction would push promoter earnings below zero");
-  }
 
   await submission.save();
   await campaign.save();
@@ -70,6 +61,77 @@ const updateSubmissionViews = async (submissionId, views) => {
   }
 
   return submission;
+};
+
+const listUsers = async () => User.find().select("-password").sort({ createdAt: -1 });
+
+const listCampaigns = async () =>
+  Campaign.find().populate("creatorId", "name email").sort({ createdAt: -1 });
+
+const updateSubmissionViews = async (submissionId, views) => {
+  const submission = await Submission.findById(submissionId);
+
+  if (!submission) {
+    throw new ApiError(404, "Submission not found");
+  }
+
+  const campaign = await Campaign.findById(submission.campaignId);
+  const promoter = await User.findById(submission.promoterId);
+
+  if (!campaign || !promoter) {
+    throw new ApiError(404, "Associated campaign or promoter not found");
+  }
+
+  return applySubmissionMetrics({
+    submission,
+    campaign,
+    promoter,
+    views,
+  });
+};
+
+const syncSubmissionViews = async (submissionId) => {
+  const submission = await Submission.findById(submissionId);
+
+  if (!submission) {
+    throw new ApiError(404, "Submission not found");
+  }
+
+  const campaign = await Campaign.findById(submission.campaignId);
+  const promoter = await User.findById(submission.promoterId).select("+youtubeRefreshToken");
+
+  if (!campaign || !promoter) {
+    throw new ApiError(404, "Associated campaign or promoter not found");
+  }
+
+  if (!submission.youtubeVideoId) {
+    submission.youtubeVideoId = extractYoutubeVideoId(submission.reelUrl);
+  }
+
+  if (!submission.youtubeVideoId) {
+    throw new ApiError(400, "This submission does not contain a valid YouTube video id");
+  }
+
+  const { exists, views } = await getVideoViews({
+    refreshToken: promoter.youtubeRefreshToken,
+    videoId: submission.youtubeVideoId,
+  });
+
+  if (!exists) {
+    submission.status = "removed";
+    submission.lastSyncedAt = new Date();
+    await submission.save();
+    return submission;
+  }
+
+  submission.status = "active";
+
+  return applySubmissionMetrics({
+    submission,
+    campaign,
+    promoter,
+    views,
+  });
 };
 
 const approveWithdrawal = async (withdrawalId, notes = "") => {
@@ -149,6 +211,7 @@ module.exports = {
   listUsers,
   listCampaigns,
   updateSubmissionViews,
+  syncSubmissionViews,
   approveWithdrawal,
   rejectWithdrawal,
 };

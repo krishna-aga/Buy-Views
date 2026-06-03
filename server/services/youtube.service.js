@@ -93,9 +93,6 @@ const fetchYoutubeChannelId = async (oauth2Client) => {
     part: ["id", "snippet"],
     mine: true,
   });
-  console.log(
-    JSON.stringify(response.data, null, 2)
-  );
 
   const channelId = response.data.items?.[0]?.id;
 
@@ -134,7 +131,6 @@ const handleYoutubeCallback = async ({ code, state, error }) => {
 
   const oauth2Client = createOAuthClient();
   const { tokens } = await oauth2Client.getToken(code);
-  console.log(tokens);
   oauth2Client.setCredentials(tokens);
 
   const [profile, channelId] = await Promise.all([
@@ -246,4 +242,5 @@ module.exports = {
   handleYoutubeCallback,
   verifyYoutubeSubmissionOwnership,
   extractYoutubeVideoId,
+  getAuthenticatedYoutubeClient,
 };

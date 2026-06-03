@@ -17,7 +17,7 @@ const createSubmission = async (promoterId, payload) => {
     throw new ApiError(404, "Promoter not found");
   }
 
-  await verifyYoutubeSubmissionOwnership(promoter, payload.reelUrl);
+  const { videoId } = await verifyYoutubeSubmissionOwnership(promoter, payload.reelUrl);
 
   const existingSubmission = await Submission.findOne({
     campaignId: payload.campaignId,
@@ -32,6 +32,7 @@ const createSubmission = async (promoterId, payload) => {
   return Submission.create({
     ...payload,
     promoterId,
+    youtubeVideoId: videoId,
   });
 };
 

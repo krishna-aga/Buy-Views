@@ -19,6 +19,11 @@ const updateSubmissionViews = async (req, res) => {
   res.status(200).json({ success: true, submission });
 };
 
+const syncSubmissionViews = async (req, res) => {
+  const submission = await adminService.syncSubmissionViews(req.validated.params.id);
+  res.status(200).json({ success: true, submission });
+};
+
 const approveWithdrawal = async (req, res) => {
   const withdrawal = await adminService.approveWithdrawal(
     req.validated.params.id,
@@ -41,6 +46,7 @@ module.exports = {
   getUsers,
   getCampaigns,
   updateSubmissionViews,
+  syncSubmissionViews,
   approveWithdrawal,
   rejectWithdrawal,
 };

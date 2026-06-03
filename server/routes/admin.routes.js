@@ -6,6 +6,7 @@ const validate = require("../middleware/validate");
 const catchAsync = require("../utils/catchAsync");
 const {
   updateSubmissionViewsSchema,
+  syncSubmissionSchema,
   withdrawalActionSchema,
 } = require("../validators/admin.validator");
 
@@ -19,6 +20,11 @@ router.put(
   "/submissions/:id/views",
   validate(updateSubmissionViewsSchema),
   catchAsync(controller.updateSubmissionViews)
+);
+router.post(
+  "/submissions/:id/sync",
+  validate(syncSubmissionSchema),
+  catchAsync(controller.syncSubmissionViews)
 );
 router.put(
   "/withdrawals/:id/approve",
