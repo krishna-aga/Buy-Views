@@ -11,6 +11,17 @@ const listUsers = async () => User.find().select("-password").sort({ createdAt: 
 const listCampaigns = async () =>
   Campaign.find().populate("creatorId", "name email").sort({ createdAt: -1 });
 
+const listSubmissions = async () =>
+  Submission.find()
+    .populate("campaignId", "title payoutPer1000Views status")
+    .populate("promoterId", "name email")
+    .sort({ createdAt: -1 });
+
+const listWithdrawals = async () =>
+  Withdrawal.find()
+    .populate("promoterId", "name email")
+    .sort({ createdAt: -1 });
+
 const updateSubmissionViews = async (submissionId, views) => {
   const submission = await Submission.findById(submissionId);
 
@@ -148,6 +159,8 @@ const rejectWithdrawal = async (withdrawalId, notes = "") => {
 module.exports = {
   listUsers,
   listCampaigns,
+  listSubmissions,
+  listWithdrawals,
   updateSubmissionViews,
   approveWithdrawal,
   rejectWithdrawal,

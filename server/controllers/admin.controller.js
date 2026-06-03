@@ -10,6 +10,16 @@ const getCampaigns = async (_req, res) => {
   res.status(200).json({ success: true, campaigns });
 };
 
+const getSubmissions = async (_req, res) => {
+  const submissions = await adminService.listSubmissions();
+  res.status(200).json({ success: true, submissions });
+};
+
+const getWithdrawals = async (_req, res) => {
+  const withdrawals = await adminService.listWithdrawals();
+  res.status(200).json({ success: true, withdrawals });
+};
+
 const updateSubmissionViews = async (req, res) => {
   const submission = await adminService.updateSubmissionViews(
     req.validated.params.id,
@@ -40,6 +50,8 @@ const rejectWithdrawal = async (req, res) => {
 module.exports = {
   getUsers,
   getCampaigns,
+  getSubmissions,
+  getWithdrawals,
   updateSubmissionViews,
   approveWithdrawal,
   rejectWithdrawal,
