@@ -45,6 +45,22 @@ const userSchema = new mongoose.Schema(
       default: 0,
       min: 0,
     },
+    youtubeConnected: {
+      type: Boolean,
+      default: false,
+    },
+    youtubeChannelId: {
+      type: String,
+      trim: true,
+    },
+    googleId: {
+      type: String,
+      trim: true,
+    },
+    youtubeRefreshToken: {
+      type: String,
+      select: false,
+    },
   },
   {
     timestamps: true,

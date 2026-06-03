@@ -21,7 +21,8 @@ const submissionSchema = new mongoose.Schema(
     },
     platform: {
       type: String,
-      enum: ["instagram", "youtube", "tiktok", "other"],
+      enum: ["youtube"],
+      default: "youtube",
       required: true,
     },
     views: {

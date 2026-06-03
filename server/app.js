@@ -7,6 +7,7 @@ const submissionRoutes = require("./routes/submission.routes");
 const walletRoutes = require("./routes/wallet.routes");
 const withdrawalRoutes = require("./routes/withdrawal.routes");
 const adminRoutes = require("./routes/admin.routes");
+const youtubeRoutes = require("./routes/youtube.routes");
 const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
@@ -32,6 +33,7 @@ app.use("/api/submissions", submissionRoutes);
 app.use("/api/wallet", walletRoutes);
 app.use("/api/withdrawals", withdrawalRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/youtube", youtubeRoutes);
 
 
 app.use((_req, res) => {
