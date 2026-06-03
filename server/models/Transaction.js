@@ -22,6 +22,9 @@ const transactionSchema = new mongoose.Schema(
       type: String,
       enum: [
         "deposit",
+        "earning",
+        "withdrawal",
+        "campaign_lock",
         "campaign_budget_locked",
         "campaign_budget_released",
         "earning_approved",

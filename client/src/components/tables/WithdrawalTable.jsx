@@ -13,11 +13,12 @@ export function WithdrawalTable({ withdrawals }) {
       />
       <Table
         emptyText="No withdrawals requested."
-        headers={["Amount", "Status", "Notes", "Requested"]}
+        headers={["Amount", "Status", "Payout reference", "Remarks", "Requested"]}
         rows={withdrawals.map((withdrawal) => [
           formatCurrency(withdrawal.amount),
           <StatusPill value={withdrawal.status} />,
-          withdrawal.notes || "No notes",
+          withdrawal.payoutReference || "Not completed",
+          withdrawal.remarks || withdrawal.notes || "No remarks",
           withdrawal.createdAt ? new Date(withdrawal.createdAt).toLocaleDateString() : "Unknown",
         ])}
       />

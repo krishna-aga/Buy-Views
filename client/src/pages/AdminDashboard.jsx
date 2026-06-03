@@ -39,10 +39,10 @@ export function AdminDashboard({ token, onError, onNotice }) {
         token,
         method: "PUT",
         body: {
-          notes: action === "approve" ? "Approved by admin" : "Rejected by admin",
+          remarks: action === "approve" ? "Simulated payout approved" : "Rejected by admin",
         },
       });
-      onNotice(`Withdrawal ${action === "approve" ? "approved" : "rejected"}.`);
+      onNotice(`Withdrawal ${action === "approve" ? "completed" : "rejected"}.`);
       await loadAdminData();
     } catch (actionError) {
       onError(actionError.message);

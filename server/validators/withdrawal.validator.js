@@ -1,4 +1,4 @@
-const { z } = require("./common.validator");
+const { z, objectId } = require("./common.validator");
 
 const createWithdrawalSchema = z.object({
   body: z.object({
@@ -8,6 +8,23 @@ const createWithdrawalSchema = z.object({
   query: z.object({}).optional(),
 });
 
+const approveWithdrawalSchema = z.object({
+  body: z
+    .object({
+      remarks: z.string().trim().max(300).optional(),
+      notes: z.string().trim().max(300).optional(),
+    })
+    .optional(),
+  params: z.object({
+    id: objectId,
+  }),
+  query: z.object({}).optional(),
+});
+
+const rejectWithdrawalSchema = approveWithdrawalSchema;
+
 module.exports = {
+  approveWithdrawalSchema,
   createWithdrawalSchema,
+  rejectWithdrawalSchema,
 };

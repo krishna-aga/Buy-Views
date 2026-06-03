@@ -5,6 +5,7 @@ import { PanelHeader } from "../components/ui/PanelHeader";
 import { AvailableCampaigns } from "../components/tables/AvailableCampaigns";
 import { SubmissionTable } from "../components/tables/SubmissionTable";
 import { WithdrawalTable } from "../components/tables/WithdrawalTable";
+import { WithdrawalRequestPanel } from "../components/wallet/WithdrawalRequestPanel";
 import { formatCurrency } from "../utils/format";
 
 export function PromoterDashboard({ token, user, onError, onNotice, refreshUser }) {
@@ -20,14 +21,13 @@ export function PromoterDashboard({ token, user, onError, onNotice, refreshUser 
   const youtubeReady = Boolean(user.youtubeConnected && user.youtubeChannelId);
 
   const loadWorkspace = async () => {
-    const [campaignPayload, submissionPayload, walletPayload, withdrawalPayload] = await Promise.all(
-      [
+    const [campaignPayload, submissionPayload, walletPayload, withdrawalPayload] =
+      await Promise.all([
         apiRequest("/campaigns", { token }),
         apiRequest("/submissions/my", { token }),
         apiRequest("/wallet", { token }),
         apiRequest("/withdrawals/my", { token }),
-      ]
-    );
+      ]);
 
     setCampaigns(campaignPayload.campaigns || []);
     setSubmissions(submissionPayload.submissions || []);
@@ -86,6 +86,14 @@ export function PromoterDashboard({ token, user, onError, onNotice, refreshUser 
           ["Withdrawn", formatCurrency(wallet?.totalWithdrawn ?? user.totalWithdrawn)],
           ["YouTube", youtubeReady ? "Connected" : "Required"],
         ]}
+      />
+
+      <WithdrawalRequestPanel
+        token={token}
+        wallet={wallet}
+        onError={onError}
+        onNotice={onNotice}
+        onWithdrawalCreated={loadWorkspace}
       />
 
       <div className="grid gap-6 lg:grid-cols-[360px_1fr]">

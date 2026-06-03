@@ -18,18 +18,7 @@ const syncSubmissionSchema = z.object({
   query: z.object({}).optional(),
 });
 
-const withdrawalActionSchema = z.object({
-  body: z.object({
-    notes: z.string().trim().max(300).optional(),
-  }),
-  params: z.object({
-    id: objectId,
-  }),
-  query: z.object({}).optional(),
-});
-
 module.exports = {
   updateSubmissionViewsSchema,
   syncSubmissionSchema,
-  withdrawalActionSchema,
 };

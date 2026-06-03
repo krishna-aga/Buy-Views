@@ -9,12 +9,12 @@ export function AdminWithdrawalTable({ withdrawals, isLoading, actionId, onAppro
     <section className="panel">
       <PanelHeader
         title="Withdrawal requests"
-        description="Approve completed payouts or reject requests that need funds returned."
+        description="Approve pending requests with a simulated test payout reference."
       />
       <Table
         isLoading={isLoading}
         emptyText="No withdrawal requests found."
-        headers={["Promoter", "Amount", "Status", "Notes", "Requested", "Actions"]}
+        headers={["Promoter", "Amount", "Simulation", "Status", "Requested", "Actions"]}
         rows={withdrawals.map((withdrawal) => {
           const isPending = withdrawal.status === "pending";
           const isBusy = actionId === withdrawal._id;
@@ -27,8 +27,13 @@ export function AdminWithdrawalTable({ withdrawals, isLoading, actionId, onAppro
               <p className="text-xs text-gray-500">{withdrawal.promoterId?.email || "No email"}</p>
             </div>,
             formatCurrency(withdrawal.amount),
+            <div>
+              <p className="text-gray-700">{withdrawal.payoutReference || "Pending approval"}</p>
+              <p className="text-xs text-gray-500">
+                {withdrawal.remarks || withdrawal.notes || "No remarks"}
+              </p>
+            </div>,
             <StatusPill value={withdrawal.status} />,
-            withdrawal.notes || "No notes",
             withdrawal.createdAt ? new Date(withdrawal.createdAt).toLocaleDateString() : "Unknown",
             <div className="flex flex-wrap gap-2">
               <button

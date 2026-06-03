@@ -1,11 +1,11 @@
 const crypto = require("crypto");
 const Transaction = require("../models/Transaction");
 const User = require("../models/User");
-const Withdrawal = require("../models/Withdrawal");
 const { getRazorpayClient } = require("../config/razorpay");
 const ApiError = require("../utils/ApiError");
 const { roundCurrency } = require("../utils/finance");
 const { createTransaction } = require("./transaction.service");
+const { getPendingWithdrawalTotal } = require("./withdrawal.service");
 
 const createWalletOrder = async (user, amount) => {
   if (user.role !== "creator") {
@@ -89,28 +89,16 @@ const verifyWalletPayment = async (user, payload) => {
 };
 
 const getWalletSnapshot = async (user) => {
-  const pendingWithdrawals = await Withdrawal.aggregate([
-    {
-      $match: {
-        promoterId: user._id,
-        status: "pending",
-      },
-    },
-    {
-      $group: {
-        _id: null,
-        total: { $sum: "$amount" },
-      },
-    },
-  ]);
+  const pendingWithdrawals = await getPendingWithdrawalTotal(user._id);
+  const approvedEarnings = roundCurrency(user.approvedEarnings);
 
   return {
     walletBalance: roundCurrency(user.walletBalance),
     pendingEarnings: roundCurrency(user.pendingEarnings),
-    approvedEarnings: roundCurrency(user.approvedEarnings),
-    withdrawableBalance: roundCurrency(user.approvedEarnings),
+    approvedEarnings,
+    withdrawableBalance: roundCurrency(Math.max(approvedEarnings - pendingWithdrawals, 0)),
     totalWithdrawn: roundCurrency(user.totalWithdrawn),
-    pendingWithdrawals: roundCurrency(pendingWithdrawals[0]?.total || 0),
+    pendingWithdrawals,
   };
 };
 
