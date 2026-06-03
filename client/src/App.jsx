@@ -83,7 +83,7 @@ function App() {
         <StatusMessage message={notice} tone="success" />
         <StatusMessage message={error} tone="error" />
         {user.role === "creator" && (
-          <CreatorDashboard token={token} onError={setError} onNotice={setNotice} />
+          <CreatorDashboard token={token} user={user} onError={setError} onNotice={setNotice} />
         )}
         {user.role === "promoter" && (
           <PromoterDashboard

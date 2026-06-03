@@ -9,6 +9,9 @@ const createTransaction = async ({
   status = "completed",
   referenceId = null,
   referenceModel = null,
+  razorpayOrderId = null,
+  razorpayPaymentId = null,
+  razorpaySignature = null,
 }) =>
   Transaction.create({
     transactionId: uuidv4(),
@@ -19,6 +22,9 @@ const createTransaction = async ({
     status,
     referenceId,
     referenceModel,
+    razorpayOrderId,
+    razorpayPaymentId,
+    razorpaySignature,
   });
 
 module.exports = {

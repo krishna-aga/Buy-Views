@@ -21,6 +21,7 @@ const transactionSchema = new mongoose.Schema(
     type: {
       type: String,
       enum: [
+        "deposit",
         "campaign_budget_locked",
         "campaign_budget_released",
         "earning_approved",
@@ -45,6 +46,23 @@ const transactionSchema = new mongoose.Schema(
       default: null,
     },
     referenceModel: {
+      type: String,
+      default: null,
+      trim: true,
+    },
+    razorpayOrderId: {
+      type: String,
+      default: null,
+      trim: true,
+      index: true,
+    },
+    razorpayPaymentId: {
+      type: String,
+      default: null,
+      trim: true,
+      index: true,
+    },
+    razorpaySignature: {
       type: String,
       default: null,
       trim: true,
