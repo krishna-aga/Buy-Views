@@ -1,0 +1,56 @@
+import React from "react";
+import { formatCurrency } from "../../utils/format";
+import { PanelHeader } from "../ui/PanelHeader";
+import { StatusPill } from "../ui/StatusPill";
+import { Table } from "../ui/Table";
+
+export function AdminWithdrawalTable({ withdrawals, isLoading, actionId, onApprove, onReject }) {
+  return (
+    <section className="panel">
+      <PanelHeader
+        title="Withdrawal requests"
+        description="Approve completed payouts or reject requests that need funds returned."
+      />
+      <Table
+        isLoading={isLoading}
+        emptyText="No withdrawal requests found."
+        headers={["Promoter", "Amount", "Status", "Notes", "Requested", "Actions"]}
+        rows={withdrawals.map((withdrawal) => {
+          const isPending = withdrawal.status === "pending";
+          const isBusy = actionId === withdrawal._id;
+
+          return [
+            <div>
+              <p className="font-medium text-gray-950">
+                {withdrawal.promoterId?.name || "Unknown promoter"}
+              </p>
+              <p className="text-xs text-gray-500">{withdrawal.promoterId?.email || "No email"}</p>
+            </div>,
+            formatCurrency(withdrawal.amount),
+            <StatusPill value={withdrawal.status} />,
+            withdrawal.notes || "No notes",
+            withdrawal.createdAt ? new Date(withdrawal.createdAt).toLocaleDateString() : "Unknown",
+            <div className="flex flex-wrap gap-2">
+              <button
+                className="btn-secondary py-1.5 text-xs"
+                disabled={!isPending || isBusy}
+                onClick={() => onApprove(withdrawal._id)}
+                type="button"
+              >
+                {isBusy ? "Working..." : "Approve"}
+              </button>
+              <button
+                className="btn-secondary py-1.5 text-xs"
+                disabled={!isPending || isBusy}
+                onClick={() => onReject(withdrawal._id)}
+                type="button"
+              >
+                Reject
+              </button>
+            </div>,
+          ];
+        })}
+      />
+    </section>
+  );
+}

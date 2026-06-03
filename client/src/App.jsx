@@ -94,7 +94,9 @@ function App() {
             refreshUser={refreshUser}
           />
         )}
-        {user.role === "admin" && <AdminDashboard token={token} onError={setError} />}
+        {user.role === "admin" && (
+          <AdminDashboard token={token} onError={setError} onNotice={setNotice} />
+        )}
       </main>
     </PageFrame>
   );

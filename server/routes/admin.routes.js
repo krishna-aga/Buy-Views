@@ -16,6 +16,7 @@ router.use(auth, authorize("admin"));
 
 router.get("/users", catchAsync(controller.getUsers));
 router.get("/campaigns", catchAsync(controller.getCampaigns));
+router.get("/withdrawals", catchAsync(controller.getWithdrawals));
 router.put(
   "/submissions/:id/views",
   validate(updateSubmissionViewsSchema),
