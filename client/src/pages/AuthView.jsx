@@ -3,15 +3,6 @@ import { apiRequest } from "../lib/api";
 import { PageFrame } from "../components/layout/PageFrame";
 import { StatusMessage } from "../components/ui/StatusMessage";
 
-function InfoRow({ label, value }) {
-  return (
-    <tr>
-      <th className="w-36 bg-gray-50 px-4 py-3 font-medium text-gray-700">{label}</th>
-      <td className="px-4 py-3 text-gray-600">{value}</td>
-    </tr>
-  );
-}
-
 export function AuthView({ error, setError, setNotice, setSession }) {
   const [mode, setMode] = useState("login");
   const [form, setForm] = useState({
@@ -58,30 +49,39 @@ export function AuthView({ error, setError, setNotice, setSession }) {
 
   return (
     <PageFrame>
-      <main className="mx-auto grid min-h-screen w-full max-w-6xl grid-cols-1 gap-8 px-6 py-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-        <section className="max-w-2xl">
-          <p className="text-sm font-semibold uppercase tracking-wide text-gray-500">CeatorReach</p>
-          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-gray-950">
-            Campaign operations for creator promotion teams.
+      <main className="mx-auto grid min-h-screen w-full max-w-7xl grid-cols-1 gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+        <section className="relative overflow-hidden rounded-[2.4rem] border border-stone-950/10 bg-[#211915] p-7 text-stone-50 shadow-[0_34px_90px_rgba(33,25,21,0.28)] sm:p-10">
+          <div className="absolute -right-20 top-0 h-80 w-80 rounded-full bg-[#e7a15b]/25 blur-3xl" />
+          <div className="absolute bottom-8 right-10 hidden h-44 w-44 rounded-full border border-stone-50/15 lg:block" />
+          <p className="text-xs font-black uppercase tracking-[0.28em] text-[#f4c06f]">CeatorReach</p>
+          <h1 className="relative mt-5 max-w-3xl font-display text-5xl leading-[0.95] tracking-tight sm:text-7xl">
+            Campaign ops with a creator-room pulse.
           </h1>
-          <p className="mt-4 text-base leading-7 text-gray-600">
+          <p className="relative mt-6 max-w-2xl text-base leading-7 text-stone-200">
             Manage creator campaigns, promoter submissions, earnings, and YouTube verification from
-            one restrained workspace built for daily use.
+            one focused workspace built for daily promotion work.
           </p>
-          <div className="mt-8 overflow-hidden rounded-lg border border-gray-200 bg-white">
-            <table className="w-full text-left text-sm">
-              <tbody className="divide-y divide-gray-200">
-                <InfoRow label="Creators" value="Create campaigns and track spend." />
-                <InfoRow label="Promoters" value="Submit YouTube Shorts after OAuth connection." />
-                <InfoRow label="Operations" value="Review users, campaigns, and payout controls." />
-              </tbody>
-            </table>
+          <div className="relative mt-10 grid gap-3 sm:grid-cols-3">
+            {[
+              ["Creators", "Launch budgets"],
+              ["Promoters", "Submit Shorts"],
+              ["Admins", "Clear payouts"],
+            ].map(([label, value]) => (
+              <div className="rounded-3xl border border-stone-50/10 bg-stone-50/10 p-4" key={label}>
+                <p className="text-xs uppercase tracking-[0.2em] text-stone-300">{label}</p>
+                <p className="mt-2 font-display text-2xl">{value}</p>
+              </div>
+            ))}
           </div>
         </section>
 
-        <section className="rounded-lg border border-gray-200 bg-white">
-          <div className="border-b border-gray-200 p-5">
-            <div className="grid grid-cols-2 rounded-md border border-gray-200 bg-gray-50 p-1">
+        <section className="panel">
+          <div className="mb-6">
+            <p className="eyebrow">Access</p>
+            <h2 className="mt-2 font-display text-4xl">Enter the studio</h2>
+          </div>
+          <div className="border-b border-stone-950/10 pb-5">
+            <div className="grid grid-cols-2 rounded-full border border-stone-950/10 bg-white/60 p-1">
               <button
                 className={`auth-tab ${mode === "login" ? "auth-tab-active" : ""}`}
                 onClick={() => setMode("login")}
@@ -99,7 +99,7 @@ export function AuthView({ error, setError, setNotice, setSession }) {
             </div>
           </div>
 
-          <form className="space-y-4 p-5" onSubmit={submit}>
+          <form className="space-y-4 pt-5" onSubmit={submit}>
             <StatusMessage message={error} tone="error" />
             {mode === "register" && (
               <label className="field">

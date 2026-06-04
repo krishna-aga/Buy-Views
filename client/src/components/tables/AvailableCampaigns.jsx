@@ -16,9 +16,9 @@ export function AvailableCampaigns({ campaigns, isLoading, onSelect, youtubeRead
         headers={["Campaign", "Budget left", "Views", "Rate", "Action"]}
         rows={campaigns.map((campaign) => [
           <div>
-            <p className="font-medium text-gray-950">{campaign.title}</p>
+            <p className="font-black text-stone-950">{campaign.title}</p>
             <a
-              className="text-xs font-medium text-gray-700 underline-offset-2 hover:underline"
+              className="text-xs font-black text-[#9b4f2e] underline-offset-4 hover:underline"
               href={campaign.clipDriveUrl}
               rel="noreferrer"
               target="_blank"

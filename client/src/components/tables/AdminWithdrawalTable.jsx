@@ -21,15 +21,15 @@ export function AdminWithdrawalTable({ withdrawals, isLoading, actionId, onAppro
 
           return [
             <div>
-              <p className="font-medium text-gray-950">
+              <p className="font-black text-stone-950">
                 {withdrawal.promoterId?.name || "Unknown promoter"}
               </p>
-              <p className="text-xs text-gray-500">{withdrawal.promoterId?.email || "No email"}</p>
+              <p className="text-xs text-stone-500">{withdrawal.promoterId?.email || "No email"}</p>
             </div>,
             formatCurrency(withdrawal.amount),
             <div>
-              <p className="text-gray-700">{withdrawal.payoutReference || "Pending approval"}</p>
-              <p className="text-xs text-gray-500">
+              <p className="text-stone-700">{withdrawal.payoutReference || "Pending approval"}</p>
+              <p className="text-xs text-stone-500">
                 {withdrawal.remarks || withdrawal.notes || "No remarks"}
               </p>
             </div>,

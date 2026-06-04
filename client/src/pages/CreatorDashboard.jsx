@@ -82,8 +82,31 @@ export function CreatorDashboard({ token, user, onError, onNotice }) {
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
-      <section className="space-y-6">
+    <div className="space-y-6">
+      <section className="grid items-start gap-6 lg:grid-cols-[1fr_360px]">
+        <div className="panel-ink relative overflow-hidden">
+          <div className="absolute -right-24 -top-24 h-64 w-64 rounded-full bg-[#f4c06f]/20 blur-3xl" />
+          <p className="text-xs font-black uppercase tracking-[0.28em] text-[#f4c06f]">Creator desk</p>
+          <h2 className="relative mt-4 font-display text-5xl leading-none sm:text-6xl">
+            Launch the next clip economy.
+          </h2>
+          <p className="relative mt-4 max-w-2xl text-sm leading-7 text-stone-300">
+            Lock campaign budgets, publish clip links, and watch spend turn into verified YouTube
+            Shorts traction.
+          </p>
+          <div className="relative mt-8 grid gap-3 sm:grid-cols-3">
+            {[
+              ["01", "Fund wallet"],
+              ["02", "Lock budget"],
+              ["03", "Track Shorts"],
+            ].map(([step, label]) => (
+              <div className="rounded-3xl border border-stone-50/10 bg-stone-50/10 p-4" key={step}>
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-[#f4c06f]">{step}</p>
+                <p className="mt-2 text-sm font-black text-stone-100">{label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
         <CreatorWalletPanel
           token={token}
           user={user}
@@ -93,6 +116,18 @@ export function CreatorDashboard({ token, user, onError, onNotice }) {
           onPaymentComplete={(nextWallet) => setWallet(nextWallet)}
           suggestedAmount={depositShortfall}
         />
+      </section>
+
+      <MetricStrip
+        items={[
+          ["Wallet", formatCurrency(wallet?.walletBalance)],
+          ["Campaigns", analytics?.totalCampaigns],
+          ["Spend", formatCurrency(analytics?.totalSpend)],
+          ["Views", formatNumber(analytics?.totalViews)],
+        ]}
+      />
+
+      <section className="grid gap-6 lg:grid-cols-[0.95fr_1.35fr]">
         <section className="panel h-fit">
           <PanelHeader
             title="Create campaign"
@@ -147,7 +182,7 @@ export function CreatorDashboard({ token, user, onError, onNotice }) {
               </label>
             </div>
             {hasInsufficientBalance && (
-              <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+              <div className="rounded-2xl border border-amber-900/10 bg-amber-100 px-4 py-3 text-sm text-amber-950">
                 Wallet balance is {formatCurrency(walletBalance)}. Add{" "}
                 {formatCurrency(depositShortfall)} before this campaign budget can be locked.
               </div>
@@ -161,17 +196,6 @@ export function CreatorDashboard({ token, user, onError, onNotice }) {
             </button>
           </form>
         </section>
-      </section>
-
-      <section className="space-y-6">
-        <MetricStrip
-          items={[
-            ["Wallet", formatCurrency(wallet?.walletBalance)],
-            ["Campaigns", analytics?.totalCampaigns],
-            ["Spend", formatCurrency(analytics?.totalSpend)],
-            ["Views", formatNumber(analytics?.totalViews)],
-          ]}
-        />
         <CampaignTable campaigns={campaigns} isLoading={isLoading} />
       </section>
     </div>

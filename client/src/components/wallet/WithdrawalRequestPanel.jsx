@@ -43,9 +43,9 @@ export function WithdrawalRequestPanel({
         title="Request withdrawal"
         description="Admin approval simulates a successful payout for test mode demonstration."
       />
-      <div className="rounded-md border border-gray-200 bg-gray-50 p-3 text-sm">
-        <p className="text-gray-500">Withdrawable balance</p>
-        <p className="mt-1 text-lg font-semibold text-gray-950">
+      <div className="rounded-3xl border border-stone-950/10 bg-white/65 p-4 text-sm">
+        <p className="text-xs font-black uppercase tracking-[0.22em] text-stone-500">Withdrawable balance</p>
+        <p className="mt-2 font-display text-3xl text-stone-950">
           {formatCurrency(withdrawableBalance)}
         </p>
       </div>

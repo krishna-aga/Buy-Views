@@ -17,8 +17,8 @@ export function CampaignTable({ campaigns, isLoading }) {
         headers={["Campaign", "Budget", "Remaining", "Views", "Rate", "Status"]}
         rows={campaigns.map((campaign) => [
           <div>
-            <p className="font-medium text-gray-950">{campaign.title}</p>
-            <p className="text-xs text-gray-500">{campaign.creatorId?.name || campaign.description}</p>
+            <p className="font-black text-stone-950">{campaign.title}</p>
+            <p className="text-xs text-stone-500">{campaign.creatorId?.name || campaign.description}</p>
           </div>,
           formatCurrency(campaign.budget),
           formatCurrency(campaign.remainingBudget),

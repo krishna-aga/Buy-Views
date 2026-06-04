@@ -57,7 +57,7 @@ export function CreatorWalletPanel({
           email: user.email,
         },
         theme: {
-          color: "#111827",
+          color: "#211915",
         },
         handler: async (response) => {
           try {
@@ -94,17 +94,17 @@ export function CreatorWalletPanel({
         title="Creator wallet"
         description="Add money before creating campaigns. Campaign budgets are locked from this balance."
       />
-      <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
-        <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Wallet balance</p>
-        <p className="mt-2 text-2xl font-semibold text-gray-950">
+      <div className="rounded-3xl border border-stone-950/10 bg-white/65 p-4">
+        <p className="text-xs font-black uppercase tracking-[0.22em] text-stone-500">Wallet balance</p>
+        <p className="mt-2 font-display text-4xl text-stone-950">
           {formatCurrency(wallet?.walletBalance)}
         </p>
       </div>
       {suggestedAmount > 0 && (
-        <div className="mt-4 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+        <div className="mt-4 rounded-3xl border border-amber-900/10 bg-amber-100 p-4 text-sm text-amber-950">
           <p>Add {formatCurrency(suggestedAmount)} to cover the current campaign budget.</p>
           <button
-            className="mt-2 text-sm font-medium underline underline-offset-2"
+            className="mt-2 text-sm font-black underline underline-offset-4"
             onClick={() => setAmount(String(suggestedAmount))}
             type="button"
           >
