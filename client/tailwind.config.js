@@ -4,15 +4,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: [
-          "Inter",
-          "ui-sans-serif",
-          "system-ui",
-          "-apple-system",
-          "BlinkMacSystemFont",
-          "Segoe UI",
-          "sans-serif",
-        ],
+        sans: ["Avenir Next", "Trebuchet MS", "ui-sans-serif", "sans-serif"],
+        display: ["Georgia", "ui-serif", "serif"],
       },
     },
   },

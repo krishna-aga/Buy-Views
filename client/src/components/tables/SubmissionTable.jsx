@@ -16,7 +16,7 @@ export function SubmissionTable({ submissions }) {
         headers={["Campaign", "Views", "Earnings", "Status", "Last sync"]}
         rows={submissions.map((submission) => [
           <a
-            className="font-medium text-gray-950 underline-offset-2 hover:underline"
+            className="font-black text-stone-950 underline-offset-4 hover:underline"
             href={submission.reelUrl}
             rel="noreferrer"
             target="_blank"

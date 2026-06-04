@@ -61,14 +61,14 @@ export function PayoutAccountPanel({ token, payoutAccount, onAccountSaved, onErr
         description="Required before creating a withdrawal request."
       />
       {payoutAccount && (
-        <div className="mb-4 rounded-md border border-gray-200 bg-gray-50 p-3 text-sm text-gray-700">
-          <p className="font-medium text-gray-950">
+        <div className="mb-4 rounded-3xl border border-stone-950/10 bg-white/65 p-4 text-sm text-stone-700">
+          <p className="font-black text-stone-950">
             {payoutAccount.accountType === "vpa" ? "UPI payout account" : "Bank payout account"}
           </p>
           <p className="mt-1">
             {payoutAccount.accountType === "vpa"
               ? payoutAccount.upiId
-              : `${payoutAccount.accountNumberMasked} · ${payoutAccount.ifscCode}`}
+              : `${payoutAccount.accountNumberMasked} - ${payoutAccount.ifscCode}`}
           </p>
         </div>
       )}

@@ -8,16 +8,21 @@ function dashboardTitle(role) {
 
 export function Header({ user, onSignOut }) {
   return (
-    <header className="border-b border-gray-200 bg-white">
-      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-4">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-gray-500">CeatorReach</p>
-          <h1 className="text-xl font-semibold text-gray-950">{dashboardTitle(user.role)}</h1>
+    <header className="px-4 pt-4 sm:px-6">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between rounded-[2rem] border border-stone-950/10 bg-stone-50/75 px-5 py-4 shadow-[0_20px_60px_rgba(61,42,25,0.10)] backdrop-blur">
+        <div className="flex items-center gap-4">
+          <div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#211915] font-display text-2xl text-[#f4c06f] shadow-lg">
+            C
+          </div>
+          <div>
+            <p className="eyebrow">CeatorReach</p>
+            <h1 className="font-display text-2xl text-stone-950 sm:text-3xl">{dashboardTitle(user.role)}</h1>
+          </div>
         </div>
         <div className="flex items-center gap-4">
-          <div className="text-right">
-            <p className="text-sm font-medium text-gray-950">{user.name}</p>
-            <p className="text-xs capitalize text-gray-500">{user.role}</p>
+          <div className="hidden text-right sm:block">
+            <p className="text-sm font-black text-stone-950">{user.name}</p>
+            <p className="text-xs capitalize text-stone-500">{user.role}</p>
           </div>
           <button className="btn-secondary" onClick={onSignOut}>
             Sign out

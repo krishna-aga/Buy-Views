@@ -62,7 +62,16 @@ function App() {
   };
 
   if (loadingUser) {
-    return <PageFrame>Loading workspace...</PageFrame>;
+    return (
+      <PageFrame>
+        <div className="grid min-h-screen place-items-center px-6">
+          <div className="panel max-w-sm text-center">
+            <p className="eyebrow">CeatorReach</p>
+            <p className="mt-3 font-display text-3xl">Loading workspace...</p>
+          </div>
+        </div>
+      </PageFrame>
+    );
   }
 
   if (!user || !token) {
@@ -79,7 +88,7 @@ function App() {
   return (
     <PageFrame>
       <Header user={user} onSignOut={signOut} />
-      <main className="mx-auto w-full max-w-7xl px-6 py-6">
+      <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:py-8">
         <StatusMessage message={notice} tone="success" />
         <StatusMessage message={error} tone="error" />
         {user.role === "creator" && (

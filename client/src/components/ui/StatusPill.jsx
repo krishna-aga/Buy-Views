@@ -10,14 +10,14 @@ export function StatusPill({ value }) {
   }, [normalized]);
 
   const classes = {
-    green: "border-green-200 bg-green-50 text-green-800",
-    amber: "border-amber-200 bg-amber-50 text-amber-900",
-    red: "border-red-200 bg-red-50 text-red-800",
-    gray: "border-gray-200 bg-gray-50 text-gray-700",
+    green: "border-emerald-900/10 bg-emerald-100 text-emerald-900",
+    amber: "border-amber-900/10 bg-amber-100 text-amber-950",
+    red: "border-red-900/10 bg-red-100 text-red-900",
+    gray: "border-stone-900/10 bg-stone-100 text-stone-700",
   };
 
   return (
-    <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs capitalize ${classes[tone]}`}>
+    <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-black capitalize ${classes[tone]}`}>
       {normalized}
     </span>
   );
